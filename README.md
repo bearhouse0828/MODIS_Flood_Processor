@@ -81,7 +81,6 @@ After processing, the system generates the following files in the `data/output/`
 
 Main configuration parameters in `src/config.py`:
 
-- **AOI Range**: Asia-Oceania region (35°E-155°E, 40°S-56°N)
 - **Grid Resolution**: Approximately 0.002083 degrees (10/4800)
 - **Data Source**: NASA MODIS MCDWD_L3_F2_NRT
 - **Output Format**: NetCDF (WGS84 projection)
