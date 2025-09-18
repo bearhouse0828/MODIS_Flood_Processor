@@ -1,0 +1,16 @@
+# Airflow requirements
+apache-airflow==2.8.1
+apache-airflow-providers-postgres==5.10.0
+apache-airflow-providers-http==4.10.0
+
+# Existing project requirements
+numpy>=1.21.0
+scipy>=1.7.0
+rasterio>=1.3.0
+xarray>=0.20.0
+netCDF4>=1.5.0
+matplotlib>=3.5.0
+cartopy>=0.20.0
+requests>=2.25.0
+
+
