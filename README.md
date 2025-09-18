@@ -1,6 +1,6 @@
 # MODIS Flood Data Processor
 
-This is a specialized system for processing MODIS flood data, separated from the original VIIRS project.
+This is a specialized system for processing MODIS flood data
 
 ## Features
 
