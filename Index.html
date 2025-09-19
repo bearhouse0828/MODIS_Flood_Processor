@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flood Map Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    #controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+    #map-container { text-align: center; }
+    #flood-map { max-width: 90vw; max-height: 80vh; border: 2px solid #333; }
+    label { font-weight: bold; }
+    select, input[type="date"] { padding: 5px; font-size: 1em; }
+  </style>
+</head>
+<body>
+
+<h1>Flood Map Viewer</h1>
+
+<div id="controls">
+  <div>
+    <label for="region-select">Select Region:</label>
+    <select id="region-select"></select>
+  </div>
+  <div>
+    <label for="date-select">Select Date:</label>
+    <input type="date" id="date-select">
+  </div>
+</div>
+
+<div id="map-container">
+  <img id="flood-map" src="" alt="Flood Map" />
+</div>
+
+<script>
+  // CloudFront or S3 URL
+  const BASE_URL = "https://d3ajren2l402wy.cloudfront.net/";
+
+  const regionSelect = document.getElementById("region-select");
+  const dateSelect = document.getElementById("date-select");
+  const floodMap = document.getElementById("flood-map");
+
+  let metadata = {};
+
+  // Fetch availability.json
+  async function fetchMetadata() {
+    try {
+      const response = await fetch(`${BASE_URL}availability.json`);
+      const data = await response.json();
+      metadata = data.regions || {};
+    } catch (err) {
+      console.error("Failed to fetch availability.json:", err);
+    }
+  }
+
+  // Populate regions dropdown
+  function populateRegions() {
+    const regions = Object.keys(metadata);
+    regions.forEach(region => {
+      const option = document.createElement("option");
+      option.value = region;
+      option.textContent = region;
+      regionSelect.appendChild(option);
+    });
+    return regions;
+  }
+
+  // Fetch available dates for a region, sorted ascending
+  function fetchAvailableDates(region) {
+    const dates = metadata[region] || [];
+    const sorted = dates.slice().sort(); // YYYY-MM-DD sorts naturally
+    return sorted; // Already in YYYY-MM-DD format, no conversion needed
+  }
+
+  // Find the latest region/date across all regions
+  function findLatestRegionAndDate() {
+    let latestRegion = null;
+    let latestDate = null;
+    Object.entries(metadata).forEach(([region, dates]) => {
+      dates.forEach(d => {
+        if (!latestDate || d > latestDate) {
+          latestDate = d;
+          latestRegion = region;
+        }
+      });
+    });
+    return { latestRegion, latestDate };
+  }
+
+  // Load map image
+  function loadMap(region, date) {
+    // Try new format first (YYYY-MM-DD), then fallback to old format (YYYYMMDD)
+    const ymd = date.replace(/-/g, ""); // YYYY-MM-DD -> YYYYMMDD
+    const filename = `flood_${region}_${ymd}.png`;
+    
+    // Try new format path first
+    const newFormatPath = `${BASE_URL}${region}/${date}/${filename}`;
+    const oldFormatPath = `${BASE_URL}${region}/${ymd}/${filename}`;
+    
+    // Create a test image to check which format exists
+    const testImg = new Image();
+    testImg.onload = () => {
+      floodMap.src = newFormatPath;
+    };
+    testImg.onerror = () => {
+      // Fallback to old format
+      floodMap.src = oldFormatPath;
+    };
+    testImg.src = newFormatPath;
+  }
+
+  // Set date constraints for calendar input
+  function setDateConstraints(region) {
+    const dates = fetchAvailableDates(region);
+    if (dates.length === 0) return [];
+    
+    // Set min and max dates for the calendar
+    dateSelect.min = dates[0];
+    dateSelect.max = dates[dates.length - 1];
+    
+    return dates;
+  }
+
+  // Validate if selected date is available
+  function validateSelectedDate(region, selectedDate) {
+    const availableDates = fetchAvailableDates(region);
+    return availableDates.includes(selectedDate);
+  }
+
+  // Initialize page
+  (async () => {
+    await fetchMetadata();
+    const regions = populateRegions();
+    if (regions.length === 0) return;
+
+    // Auto select latest region and date
+    const { latestRegion, latestDate } = findLatestRegionAndDate();
+    regionSelect.value = latestRegion;
+
+    // Set date constraints and select latest
+    const dates = setDateConstraints(latestRegion);
+    if (dates.length > 0) {
+      dateSelect.value = latestDate;
+      loadMap(latestRegion, latestDate);
+    }
+  })();
+
+  // Event listeners
+  regionSelect.addEventListener("change", () => {
+    const region = regionSelect.value;
+    const dates = setDateConstraints(region);
+    if (dates.length === 0) return;
+
+    // Select the latest date for the new region
+    dateSelect.value = dates[dates.length - 1];
+    loadMap(region, dateSelect.value);
+  });
+
+  dateSelect.addEventListener("change", () => {
+    const region = regionSelect.value;
+    const selectedDate = dateSelect.value;
+    
+    // Validate the selected date
+    if (validateSelectedDate(region, selectedDate)) {
+      loadMap(region, selectedDate);
+    } else {
+      // If invalid date selected, reset to latest available date
+      const dates = fetchAvailableDates(region);
+      if (dates.length > 0) {
+        dateSelect.value = dates[dates.length - 1];
+        loadMap(region, dateSelect.value);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

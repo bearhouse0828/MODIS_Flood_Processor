@@ -21,3 +21,6 @@ pathlib2>=2.3.0; python_version < "3.4"
 
 # Logging and utilities
 typing-extensions>=3.10.0; python_version < "3.8"
+
+# AWS S3
+boto3>=1.28.0

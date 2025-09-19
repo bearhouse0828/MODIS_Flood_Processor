@@ -160,8 +160,11 @@ class FloodPlotter:
         """
         # Define U.S. river basin ranges
         regions = {
-            'Columbia River Basin': {'lon': (-125, -116), 'lat': (42, 49)}
+            'Columbia River Basin': {'lon': (-125, -116), 'lat': (42, 49)},
+            'Mississippi Upper': {'lon': (-89, -86), 'lat': (41, 43)},
+            'Ohio River Valley': {'lon': (-82, -80), 'lat': (40, 42)},
         }
+
 
         try:
             # Read data
