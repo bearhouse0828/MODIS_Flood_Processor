@@ -90,3 +90,10 @@ dmypy.json
 *.bak
 *.backup
 *~
+
+# Airflow
+airflow/airflow.cfg
+airflow/airflow.db
+airflow/logs/
+airflow/standalone_admin_password.txt
+airflow/webserver_config.py
