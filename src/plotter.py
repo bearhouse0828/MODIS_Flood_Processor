@@ -190,8 +190,22 @@ class FloodPlotter:
             for region_name, bounds in regions.items():
                 self.logger.info(f"Plotting flood map for {region_name}...")
                 
-                # Create figure and subplot
-                fig = plt.figure(figsize=(12, 10))
+                # Create figure with fixed width but adjustable height
+                # Calculate height based on region bounds to maintain aspect ratio
+                region_bounds = bounds
+                width_deg = region_bounds['lon'][1] - region_bounds['lon'][0]  # lon_max - lon_min
+                height_deg = region_bounds['lat'][1] - region_bounds['lat'][0]  # lat_max - lat_min
+                
+                # Fixed width in inches, calculate height to maintain aspect ratio
+                fixed_width = 16.0  # inches
+                aspect_ratio = height_deg / width_deg
+                calculated_height = fixed_width * aspect_ratio
+                
+                # Ensure minimum height for readability
+                min_height = 8.0
+                final_height = max(calculated_height, min_height)
+                
+                fig = plt.figure(figsize=(fixed_width, final_height))
                 gs = fig.add_gridspec(2, 1, height_ratios=[1, 0.04], hspace=0.05)
                 
                 # Main map subplot
@@ -255,9 +269,11 @@ class FloodPlotter:
                     'Insufficient data'
                 ], fontsize=10)
                 
-                # Save image
+                # Save image with fixed size
                 output_path = os.path.join(output_dir, f"flood_{region_name}_{date_str}.png")
-                plt.savefig(output_path, dpi=150, bbox_inches='tight')
+                plt.savefig(output_path, dpi=150, 
+                           facecolor='white', edgecolor='none',
+                           pad_inches=0.1)
                 plt.close()
                 
                 self.logger.info(f"Saved {region_name} flood map to: {output_path}")
