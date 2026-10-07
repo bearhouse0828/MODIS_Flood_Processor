@@ -21,7 +21,7 @@ def download_flood_data(**context):
     from config import Config
     from datetime import datetime, timedelta
     
-    # Calculate date two months ago
+    # Calculate date three days ago
     three_days_ago = datetime.now() - timedelta(days=3)
     
     # Initialize downloader with config

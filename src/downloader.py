@@ -1,8 +1,7 @@
 import requests
-import logging
 from pathlib import Path
-from datetime import datetime
-from typing import List, Optional
+from datetime import datetime, timedelta
+from typing import List
 from config import Config
 
 
@@ -104,7 +103,7 @@ class MODISFloodDownloader:
         while current_date <= end_date:
             files = self.download_tiles(current_date)
             all_files.extend(files)
-            current_date = current_date.replace(day=current_date.day + 1)
+            current_date += timedelta(days=1)
         
         self.logger.info(f"Date range download completed: {len(all_files)} files")
         return all_files

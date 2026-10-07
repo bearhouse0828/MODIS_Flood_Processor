@@ -13,7 +13,6 @@ import numpy as np
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
 from datetime import datetime
-import logging
 from typing import Union, Optional
 
 from config import Config

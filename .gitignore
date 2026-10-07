@@ -96,4 +96,6 @@ airflow/airflow.cfg
 airflow/airflow.db
 airflow/logs/
 airflow/standalone_admin_password.txt
+airflow/simple_auth_manager_passwords.json*
+airflow/*.generated
 airflow/webserver_config.py
