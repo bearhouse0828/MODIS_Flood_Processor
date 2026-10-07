@@ -13,7 +13,7 @@ This is a specialized system for processing MODIS flood data
 ## Project Structure
 
 ```
-flood_processor/
+MODIS_Flood_Processor/
 ├── src/
 │   ├── config.py          # Configuration file
 │   ├── downloader.py      # Data downloader
@@ -21,10 +21,16 @@ flood_processor/
 │   ├── exporter.py        # Data exporter
 │   ├── plotter.py         # Data plotter
 │   └── main.py           # Main program entry point
-├── data/
-│   ├── raw/              # Raw data directory
-│   └── output/           # Output data directory
-├── logs/                 # Log files directory
+├── airflow/              # Airflow DAG for the daily pipeline (see airflow/README.md)
+├── data/                 # Created at runtime (not tracked)
+│   └── flood/
+│       ├── raw/          # Raw data directory
+│       └── output/       # Output data directory
+├── logs/                 # Log files directory (created at runtime)
+├── Index.html            # Static viewer for maps published to S3
+├── availability.json     # Example region/date manifest read by Index.html
+├── upload_to_s3.py       # Upload generated maps to S3
+├── test_flood_processor.py  # Test script
 ├── requirements.txt      # Dependencies list
 └── README.md            # Project documentation
 ```
@@ -69,18 +75,17 @@ python src/main.py --list-available --days-back 7
 
 ## Output Files
 
-After processing, the system generates the following files in the `data/output/` directory:
+After processing, the system generates the following files in the `data/flood/output/YYYY/DDD/` directory (DDD = day of year):
 
 - **NetCDF Files**: `MODIS_Flood_YYYYMMDD.nc` - Standardized flood data
 - **Image Files**: In `plots/` subdirectory
-  - `flood_full_YYYYMMDD.png` - Full region map
-  - `flood_mekong_YYYYMMDD.png` - Mekong River region map
-  - `flood_[RegionName]_YYYYMMDD.png` - Sub-region maps
+  - `flood_[RegionName]_YYYYMMDD.png` - Sub-region maps (regions are defined in `src/plotter.py`)
 
 ## Configuration
 
 Main configuration parameters in `src/config.py`:
 
+- **Area of Interest**: Contiguous U.S. (125°W-66.9°W, 24.5°N-49.5°N)
 - **Grid Resolution**: Approximately 0.002083 degrees (10/4800)
 - **Data Source**: NASA MODIS MCDWD_L3_F2_NRT
 - **Output Format**: NetCDF (WGS84 projection)

@@ -3,7 +3,6 @@
 Get Airflow standalone credentials
 """
 import os
-import sys
 from pathlib import Path
 
 # Set Airflow environment

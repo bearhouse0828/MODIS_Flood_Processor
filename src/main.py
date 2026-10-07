@@ -1,10 +1,7 @@
-import logging
-from pathlib import Path
 from datetime import datetime, timedelta
 import argparse
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import sys
-import os
 
 from config import Config
 from downloader import MODISFloodDownloader

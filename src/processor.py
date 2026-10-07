@@ -1,15 +1,13 @@
-import logging
 import numpy as np
 import rasterio
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Tuple
 from datetime import datetime
 import os
 from scipy.ndimage import zoom
 import xarray as xr
 from rasterio.enums import Resampling
 from rasterio import warp
-import gc
 
 from config import Config
 

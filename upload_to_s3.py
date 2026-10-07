@@ -4,7 +4,6 @@ Upload flood data files to S3 bucket with proper organization.
 Structure: s3://floodmap/{region}/{date}/{filename}
 """
 
-import os
 import boto3
 import re
 from pathlib import Path
@@ -18,7 +17,7 @@ def upload_flood_data_to_s3():
     s3_client = boto3.client('s3')
     
     # Base directory containing the data
-    base_dir = Path("/Users/jjpeng/Downloads/flood_processor/data/flood/output")
+    base_dir = Path(__file__).parent / "data" / "flood" / "output"
     
     # Find all PNG files in plots directories
     png_files = list(base_dir.rglob("*.png"))
